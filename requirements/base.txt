@@ -1,0 +1,13 @@
+albumentations==0.4.5
+hydra-core
+importlib
+matplotlib
+numpy==1.19.0
+opencv-python
+pandas
+pycocotools==2.0.1
+pytorch-lightning==0.8.4
+scikit-learn
+termcolor
+torch==1.5.1
+torchvision==0.6.1
