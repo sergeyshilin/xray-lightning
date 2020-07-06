@@ -1,0 +1,89 @@
+augmentation:
+  train:
+    augs:
+    - class_name: albumentations.Flip
+      params:
+        p: 0.6
+    - class_name: albumentations.RandomBrightnessContrast
+      params:
+        p: 0.6
+    - class_name: albumentations.pytorch.transforms.ToTensorV2
+      params:
+        p: 1.0
+    bbox_params:
+      format: pascal_voc
+      label_fields:
+      - labels
+  valid:
+    augs:
+    - class_name: albumentations.pytorch.transforms.ToTensorV2
+      params:
+        p: 1.0
+    bbox_params:
+      format: pascal_voc
+      label_fields:
+      - labels
+callbacks:
+  early_stopping:
+    class_name: pl.callbacks.EarlyStopping
+    params:
+      mode: ${training.mode}
+      monitor: ${training.metric}
+      patience: 10
+  model_checkpoint:
+    class_name: pl.callbacks.ModelCheckpoint
+    params:
+      filepath: saved_models/
+      mode: ${training.mode}
+      monitor: ${training.metric}
+      save_top_k: 3
+data:
+  batch_size: 6
+  dataset_path: data/BBox_List_2017.csv
+  images_folder_path: data/images
+  labels_path: data/labels.txt
+  num_classes: 8
+  num_workers: 0
+  validation_split: 0.15
+general:
+  project_name: xray-detection
+logging:
+  log: true
+  logs_dir: logs/
+model:
+  backbone:
+    class_name: torchvision.models.detection.fasterrcnn_resnet50_fpn
+    params:
+      pretrained: true
+  head:
+    class_name: torchvision.models.detection.faster_rcnn.FastRCNNPredictor
+    params:
+      num_classes: ${data.num_classes}
+optimizer:
+  class_name: torch.optim.AdamW
+  params:
+    lr: ${training.lr}
+    weight_decay: 0.001
+scheduler:
+  class_name: torch.optim.lr_scheduler.ReduceLROnPlateau
+  monitor: ${training.metric}
+  params:
+    factor: 0.1
+    mode: ${training.mode}
+    patience: 5
+  step: epoch
+trainer:
+  accumulate_grad_batches: 1
+  distributed_backend: dp
+  gpus: 1
+  gradient_clip_val: 0.5
+  max_epochs: 13
+  num_sanity_val_steps: 0
+  profiler: false
+  weights_summary: null
+training:
+  debug: false
+  lr: 0.0001
+  metric: main_score
+  mode: max
+  seed: 42
