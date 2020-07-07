@@ -3,10 +3,19 @@ augmentation:
     augs:
     - class_name: albumentations.Flip
       params:
-        p: 0.6
+        p: 0.5
     - class_name: albumentations.RandomBrightnessContrast
       params:
-        p: 0.6
+        p: 0.5
+    - class_name: albumentations.RandomGamma
+      params:
+        p: 0.5
+    - class_name: albumentations.ToGray
+      params:
+        p: 0.5
+    - class_name: albumentations.Normalize
+      params:
+        p: 1.0
     - class_name: albumentations.pytorch.transforms.ToTensorV2
       params:
         p: 1.0
@@ -16,6 +25,9 @@ augmentation:
       - labels
   valid:
     augs:
+    - class_name: albumentations.Normalize
+      params:
+        p: 1.0
     - class_name: albumentations.pytorch.transforms.ToTensorV2
       params:
         p: 1.0
@@ -75,6 +87,8 @@ scheduler:
     mode: ${training.mode}
     patience: 5
   step: epoch
+testing:
+  debug: ${training.debug}
 trainer:
   accumulate_grad_batches: 1
   distributed_backend: dp

@@ -75,10 +75,6 @@ class XrayDataset(Dataset):
         image = cv2.imread(f"{self.image_dir}/{image_id}", cv2.IMREAD_COLOR)
         image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB).astype(np.float32)
 
-        # normalization.
-        # TO DO: refactor preprocessing
-        image /= 255.0
-
         # test dataset must have some values so that transforms work.
         target = {
             "labels": torch.as_tensor([[0]], dtype=torch.float32),
@@ -223,6 +219,10 @@ def get_test_dataset(cfg: DictConfig = None) -> Dataset:
     train_ids = set(pd.read_csv(data_path).image_id.values)
     all_ids = set(os.listdir(to_absolute_path(images_dir)))
     test_ids = all_ids.difference(train_ids)
+
+    # for fast testing
+    if cfg.testing.debug:
+        test_ids = list(test_ids)[:100]
 
     test_df = pd.DataFrame(test_ids, columns=["image_id"])
 
