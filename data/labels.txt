@@ -1,0 +1,10 @@
+{
+    "Atelectasis": 0,
+    "Cardiomegaly": 1,
+    "Effusion": 2,
+    "Infiltrate": 3,
+    "Mass": 4,
+    "Nodule": 5,
+    "Pneumonia": 6,
+    "Pneumothorax": 7
+}
