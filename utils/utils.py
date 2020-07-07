@@ -1,18 +1,22 @@
 from __future__ import print_function
-from typing import Dict
+
+from collections import OrderedDict
+from typing import Any, Dict
 
 import ast
 import importlib
+import os
 import pickle
 import random
 
 import numpy as np
+import pytorch_lightning as pl
 import torch
 import torch.distributed as dist
 
-from collections import OrderedDict
-from omegaconf import OmegaConf
-from typing import Any
+from hydra.utils import to_absolute_path
+from shutil import copyfile
+from omegaconf import DictConfig, OmegaConf
 
 
 def all_gather(data):
@@ -181,6 +185,34 @@ def read_labels(filepath: str = "") -> Dict[str, int]:
             labels = ast.literal_eval(content.read())
 
     return labels
+
+
+def save_best(model: pl.LightningModule, cfg: DictConfig) -> None:
+    """
+    Save the entire model.
+
+    Parameters
+    ----------
+    model : pl.LightningModule
+        Pytorch Lightning model
+    cfg : DictConfig
+        Project config with logs path
+    """
+    best_model_path = cfg.logging.best_model_path
+    best_model_folder = os.path.dirname(best_model_path)
+
+    if not os.path.exists(best_model_folder):
+        os.makedirs(best_model_folder)
+
+    torch.save(model, cfg.logging.best_model_path)
+
+    labels_path = cfg.logging.best_model_labels_path
+    labels_folder = os.path.dirname(labels_path)
+
+    if not os.path.exists(labels_folder):
+        os.makedirs(labels_folder)
+
+    copyfile(to_absolute_path(cfg.data.labels_path), labels_path)
 
 
 def set_seed(seed: int = 42) -> None:

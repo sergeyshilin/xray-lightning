@@ -1,12 +1,14 @@
 #!/usr/bin/env python
 
+import os
 import hydra
 import pytorch_lightning as pl
 
 from omegaconf import DictConfig
 
+from logger import get_logger
 from model import XrayDetection
-from utils import load_obj, flatten_omegaconf, set_seed
+from utils import load_obj, flatten_omegaconf, save_best, set_seed
 
 
 @hydra.main(config_path="config.yaml")
@@ -46,6 +48,21 @@ def train(cfg: DictConfig) -> None:
         **cfg.trainer,
     )
     trainer.fit(xray_detection)
+
+    # Load the best checkpoint
+    get_logger().info("Saving model from the best checkpoint...")
+    checkpoints = [
+        ckpt
+        for ckpt in os.listdir("./")
+        if ckpt.endswith(".ckpt") and ckpt != "last.ckpt"
+    ]
+    best_checkpoint_path = checkpoints[0]
+
+    model = XrayDetection.load_from_checkpoint(
+        best_checkpoint_path, hparams=hparams, cfg=cfg, model=model
+    )
+
+    save_best(model, cfg)
 
 
 if __name__ == "__main__":

@@ -36,7 +36,8 @@ callbacks:
       filepath: saved_models/
       mode: ${training.mode}
       monitor: ${training.metric}
-      save_top_k: 3
+      save_last: True
+      save_top_k: 1
 data:
   batch_size: 6
   dataset_path: data/BBox_List_2017.csv
@@ -50,6 +51,8 @@ general:
 logging:
   log: true
   logs_dir: logs/
+  best_model_path: best_model/model.pth
+  best_model_labels_path: best_model/labels.txt
 model:
   backbone:
     class_name: torchvision.models.detection.fasterrcnn_resnet50_fpn
