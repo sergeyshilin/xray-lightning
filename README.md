@@ -21,4 +21,4 @@ This will generate `predictions.csv` that can be used for future analysis.
 
 ## Results
 
-Some of the results can be found in [this notebook](notebooks/Visualize\ predictions.ipynb).
+Some of the results can be found in [this notebook](notebooks/Visualize%20predictions.ipynb).

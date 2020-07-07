@@ -2,7 +2,7 @@
 
 [Chest X-Ray](https://nihcc.app.box.com/v/ChestXray-NIHCC/folder/36938765345) dataset is used for this project.
 
-*Please check [this notebook](../notebooks/X-ray\ visualization.ipynb) to get familiar with data*
+*Please check [this notebook](../notebooks/X-ray%20visualization.ipynb) to get familiar with data*
 
 After all images are downloaded from the website and unzipped to `images/` folder (`data/images/` from the root of the repo), the project should have the following structure:
 
