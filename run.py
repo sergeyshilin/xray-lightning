@@ -8,9 +8,8 @@ import torch
 from dataset import get_test_dataset
 from hydra.utils import to_absolute_path
 from omegaconf import DictConfig
+from tqdm import tqdm
 from utils import collate_fn
-
-from logger import get_logger
 
 
 def format_prediction_string(boxes, scores) -> str:
@@ -66,7 +65,7 @@ def run(cfg: DictConfig) -> None:
         collate_fn=collate_fn,
     )
 
-    for images, _, image_ids in test_loader:
+    for images, _, image_ids in tqdm(test_loader):
 
         images = list(image.to(device) for image in images)
         outputs = model(images)
@@ -90,8 +89,6 @@ def run(cfg: DictConfig) -> None:
             }
 
             results.append(result)
-
-            get_logger().info("Predicted for image '%s'", image_id)
 
     test_df = pd.DataFrame(
         results, columns=["image_id", "predictions", "labels"]
